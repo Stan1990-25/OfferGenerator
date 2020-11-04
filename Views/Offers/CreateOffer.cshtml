@@ -1,0 +1,576 @@
+﻿@model OfferViewModel
+
+<link href="~/lib/twitter-bootstrap/css/CustomStyles.css" rel="stylesheet" />
+
+<div class="container-fluid mt-2">
+
+    <h2 class="text-primary text-center">Изготвяне на оферта</h2>
+    <h2 class="text-primary text-center">№@Model.Number</h2>
+
+    <form action="/" method="post">
+
+        @*Избор на клиент*@
+        <div class="row mt-5">
+            <div class="col-sm-2"> <label style="font-size:large">Избор на клиент:</label></div>
+            <div class="col-sm-3">
+                <input style="width:400px" type="text" id="clientName" onkeypress="textChanged(this, clientNames, 'clientName', 'keyDataClient')"
+                       oninput="textChanged(this, clientNames, 'clientName', 'keyDataClient')" />
+                <span asp-validation-for="ClientName"></span>
+                <div>
+                    <select style="width:400px;" id="keyDataClient" hidden onclick="GetClientData()">
+                    </select>
+                </div>
+            </div>
+        </div>
+        @*Град където е ситуиран клента*@
+        <div class="row mt-2">
+
+            <div class="col-sm-2"> <label style="font-size:large">Град:</label></div>
+            <div class="col-sm-3">
+                <input type="text" id="clientCity" />
+                <span asp-validation-for="ClientCity"></span>
+            </div>
+        </div>
+        @*Избор на лице за контакт*@
+        <div class="row mt-2">
+            <div class="col-sm-2"> <label style="font-size:large">Лице за контакт:</label></div>
+            <div class="col-sm-2">
+                <input type="text" id="contactName" onkeypress="textChanged(this, clientContactsNames, 'contactName', 'keyDataContact')"
+                       oninput="textChanged(this, clientContactsNames, 'contactName', 'keyDataContact')" />
+                <span asp-validation-for="ContactName"></span>
+
+                <div>
+                    <select id="keyDataContact" hidden
+                            onclick="UpdateTBValue('contactName', 'keyDataContact', true, ['contactPhone'], [clientContactsPhones[document.getElementById('keyDataContact').options.selectedIndex]])">
+                    </select>
+                </div>
+            </div>
+            @*Телефон на лице за контакт*@
+            <div class="col-sm-2"> <label style="font-size:large">Телефон за контакт:</label></div>
+            <div class="col-sm-2">
+                <input type="text" id="contactPhone" />
+                <span asp-validation-for="ClientPhoneNumber"></span>
+            </div>
+        </div>
+
+        @*Избор на продукт*@
+        <h4 class="text-primary text-center mt-5">Селекция на артикули</h4>
+        <div class="row mt-3">
+            <div class="col-sm-2"> <label style="font-size:large">Избор на продукт:</label></div>
+            <div class="col-sm-3">
+                <input style="width:400px" type="text" id="prodNumber" onkeypress="textChanged(this, prodNumbers, 'prodNumber', 'keyData')"
+                       oninput="textChanged(this, prodNumbers, 'prodNumber', 'keyData')" />
+                <div>
+                    <select style="width:400px;" id="keyData" hidden onclick="UpdateTBValue('prodNumber', 'keyData')">
+                    </select>
+                </div>
+            </div>
+            @*Избор на количество*@
+            <div class="col-sm-2">
+                <label style="font-size:large">Количество:</label>
+                <input style="width:50px" type="number" id="quantity" value="1" />
+            </div>
+            @*Линейни метра*@
+            <div class="col-sm-2">
+                <label style="font-size:large">Метра:</label>
+                <input style="width:50px" type="number" id="meters" value="1" />
+                <a class="btn btn-primary" onclick="AddProduct(document.getElementById('prodNumber').value)">  +  </a>
+            </div>
+
+            <div class="table mt-2 col-sm-7">
+                @*Таблица с избрани продукти*@
+                <table id="products" style="width:auto">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>№</th>
+                            <th>Каталожен номер</th>
+                            <th>Описание</th>
+                            <th>Категория</th>
+                            <th>Количество</th>
+                            <th>Единична цена</th>
+                            <th>Общо цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @*Данни за текущата стойност на поръчката*@
+        <div>
+
+            <div class="line"></div>
+
+            @*Сума без ДДС*@
+            <div class="row mt-2">
+                <label class="col-sm-2 mt-2" style="font-size:large">Сума без ДДС:</label>
+                <label style="font-size:large" id="totalValue"></label>
+            </div>
+            @*Отстъпка*@
+            <div class="row mt-2">
+                <label class="col-sm-1 mt-2">Отстъпка:</label>
+                <input type="number" style="width:50px" id="discountValue" onchange="CalculateTotalPrice()" />
+                <label class="mt-2">%</label>
+                <label style="font-size:large" id="discountFromTotal"></label>
+            </div>
+            @*Сума с отстъпка без ДДС*@
+            <div class="row mt-2">
+                <label class="col-sm-2 mt-2" style="font-size:large">Сума с отстъпка без ДДС:</label>
+                <label style="font-size:large" id="totalWithoutVAT"></label>
+            </div>
+            @*20% ДДС*@
+            <div class="row mt-2">
+                <label class="col-sm-2 mt-2" style="font-size:large">20% ДДС:</label>
+                <label style="font-size:large" id="vatValue"></label>
+            </div>
+            @*Общо с ДДС*@
+            <div class="row mt-2">
+                <label class="col-sm-2 mt-2" style="font-size:large">Общо с ДДС:</label>
+                <label style="font-size:large" id="totalWithVAT"></label>
+            </div>
+
+            <div class="line"></div>
+        </div>
+
+        @*Условия на доставката*@
+        <div>
+            @*Валидност на офертата*@
+            <div class="row mt-5">
+                <label class="col-sm-2" style="font-size:large">Валидност на офертата:</label>
+                <input style="width:50px" type="number" id="offerValidityDays" />
+                <label style="font-size:large" class="ml-1">работни дни</label>
+                <span asp-validation-for="ExpirationDays"></span>
+            </div>
+            @*Условия на доставка*@
+            <div class="row mt-2">
+                <label class="col-sm-2" style="font-size:large">Условия на доставка:</label>
+                <textarea style="resize:none" rows="2" cols="50" id="deliveryTerms"></textarea>
+                <span asp-validation-for="DeliveryTerms"></span>
+            </div>
+            @*Начин на плащане*@
+            <div class="row mt-2">
+                <label class="col-sm-2" style="font-size:large">Начин на плащане:</label>
+                <textarea style="resize:none" rows="2" cols="50" id="typeOfPayment"></textarea>
+                <span asp-validation-for="PaymentType"></span>
+            </div>
+            @*Срок на доставката*@
+            <div class="row mt-2">
+                <label class="col-sm-2" style="font-size:large">Срок на доставка:</label>
+                <textarea style="resize:none" rows="2" cols="50" id="deliveryDeadline"></textarea>
+                <span asp-validation-for="DeliveryDeadline"></span>
+            </div>
+            @*Начин на доставка*@
+            <div class="row mt-2">
+                <label class="col-sm-2" style="font-size:large">Начин на доставка:</label>
+                <textarea style="resize:none" rows="2" cols="50" id="deliveryType"></textarea>
+                <span asp-validation-for="DeliveryType"></span>
+            </div>
+            @*Изготвил*@
+            <div class="row mt-2">
+                <label class="col-sm-2" style="font-size:large">Изготвил:</label>
+                <input type="text" id="author" />
+                <span asp-validation-for="Author"></span>
+            </div>
+
+            <div class="line"></div>
+
+        </div>
+
+        @*Бутон "Изготви оферта"*@
+        <a class="btn btn-primary horizontal-center" onclick="GetOfferData()">Изготви оферта</a>
+
+    </form>
+
+</div>
+
+<script>
+
+    var offerNumber = @Json.Serialize(Model.Number);
+
+    var clients = @Json.Serialize(Model.AllClients.Clients);
+    var client;
+    var clientNames = @Json.Serialize(Model.AllClients.Clients.Select(c => c.Client.Name));
+    var clientContactsNames = [];
+    var clientContactsPhones = [];
+
+    var products = @Json.Serialize(Model.AllProducts);
+    var prodNumbers = @Json.Serialize(Model.AllProducts.Select(p => p.OrderNumber + " - " + p.Description));
+    var productsSelected = [];
+
+
+    // Check whether the array has $values attribute
+    function Check$Values(sourceArray)
+    {
+        var resultArray = [];
+        try
+        {
+            for (var i = 0; i < sourceArray.$values.length; i++)
+            {
+                resultArray.push(sourceArray.$values[i]);
+            }
+        }
+        catch (err)
+        {
+            for (var i = 0; i < sourceArray.length; i++)
+            {
+                resultArray.push(sourceArray[i]);
+            }
+        }
+        return resultArray;
+    }
+
+    // Validate form
+    function ValidateForm(exceptions = null)
+    {
+        var inputs = document.getElementsByTagName("input");
+        var textAreas = document.getElementsByTagName("textarea");
+        var tables = document.getElementsByTagName("table");
+
+        var validForm = true;
+
+        for (var i = 0; i < inputs.length; i++)
+        {
+            if ((inputs[i].value === null || inputs[i].value === "") && exceptions.indexOf(inputs[i].id) == -1)
+            {
+                inputs[i].style.borderColor = 'red';
+                inputs[i].placeholder = 'Моля попълнете';
+                validForm = false;
+            }
+            else
+                inputs[i].style.borderColor = 'inherit';
+        }
+
+        for (var i = 0; i < textAreas.length; i++)
+        {
+            if ((textAreas[i].value === null || textAreas[i].value === "") && exceptions.indexOf(textAreas[i].id) == -1)
+            {
+                textAreas[i].style.borderColor = 'red';
+                textAreas[i].placeholder = 'Моля попълнете';
+                validForm = false;
+            }
+            else
+                textAreas[i].style.borderColor = 'inherit';
+        }
+
+        for (var i = 0; i < tables.length; i++)
+        {
+            if (tables[i].rows.length < 2)
+            {
+                var body = tables[i].getElementsByTagName("tbody")[0];
+                var newRow = body.insertRow();
+                newRow.innerHTML = "<p style='background-color:red'>В таблицата трябва да има поне 1 запис</p>";
+                validForm = false;
+            }
+        }
+
+        return validForm;
+    }
+
+    function PaintBorder(id)
+    {
+        var element = document.getElementById(id);
+        if (element.value === null || element.value === "") {
+            element.style.borderColor = 'red';
+            return false;
+        }
+        else
+        {
+            element.style.borderColor = 'black';
+            return true;
+        }
+    }
+
+    // Get client data
+    function GetClientData()
+    {
+        clientContactsNames = [];
+        clientContactsPhones = [];
+
+        var getOption = document.getElementById("keyDataClient");
+        document.getElementById("clientName").value = getOption.options[getOption.selectedIndex].text;
+
+        document.getElementById("keyDataClient").hidden = true;
+
+        document.getElementById("contactName").value = "";
+        document.getElementById("contactPhone").value = "";
+
+        var clientsTransformed = Check$Values(clients);
+
+        for (var i = 0; i < clientsTransformed.length; i++)
+        {
+            if (clientsTransformed[i].client.name.trim() === document.getElementById("clientName").value.trim())
+            {
+                document.getElementById("clientCity").value = clientsTransformed[i].client.city;
+                document.getElementById("discountValue").value = clientsTransformed[i].client.discount;
+                client = clientsTransformed[i];
+                break;
+            }
+        }
+
+        var contactsTransformed = Check$Values(client.contacts);
+
+        for (var i = 0; i < contactsTransformed.length; i++)
+        {
+            clientContactsNames.push(contactsTransformed[i].name);
+            clientContactsPhones.push(contactsTransformed[i].phoneNumber);
+        }
+
+        return client;
+    }
+
+    // Get offer data
+    function GetOfferData()
+    {
+        if (!ValidateForm(["prodNumber"]))
+            return;
+
+        var offer =
+        {
+            number: "", clientName: "", clientCity: "", clientPhoneNumber: "", clientId:0, discount: 0, contactName: "",
+            selectedProducts: [{ id:0, productNumber: "", description: "", category: "", quantity: 0, meters:0, unitPrice: 0, totalPrice: 0 }],
+            expirationDays: 0, deliveryTerms: "", paymentType: "", deliveryDeadline: "", deliveryType: "", total:0, author: "", isApproved: false
+        }
+
+        offer.number = offerNumber;
+        offer.clientName = document.getElementById("clientName").value;
+        offer.clientCity = document.getElementById("clientCity").value;
+        offer.clientPhoneNumber = document.getElementById("contactPhone").value;
+        offer.clientId = client.client.id;
+        offer.discount = parseFloat(document.getElementById("discountValue").value);
+        offer.contactName = document.getElementById("contactName").value;
+
+        var table = document.getElementById("products");
+
+        for (var i = 0; i < productsSelected.length; i++) {
+            offer.selectedProducts.push({
+                id : productsSelected[i].id,
+                productNumber : productsSelected[i].prodNumber,
+                description : productsSelected[i].description,
+                category : productsSelected[i].category,
+                quantity: productsSelected[i].quantity,
+                meters: productsSelected[i].meters,
+                unitPrice : parseFloat(productsSelected[i].pricePerUnit),
+                totalPrice: parseFloat(productsSelected[i].totalPrice)
+            });
+        }
+
+        offer.expirationDays = parseInt(document.getElementById("offerValidityDays").value);
+        offer.deliveryTerms = document.getElementById("deliveryTerms").value;
+        offer.paymentType = document.getElementById("typeOfPayment").value;
+        offer.deliveryDeadline = document.getElementById("deliveryDeadline").value;
+        offer.deliveryType = document.getElementById("deliveryType").value;
+        offer.author = document.getElementById("author").value;
+        offer.total = parseFloat(document.getElementById("totalWithVAT").textContent.replace(' лв', ''));
+
+        var offerStringified = JSON.stringify(offer);
+
+        $.ajax({
+            url: "/offers/addoffer",
+            type: "POST",
+            contentType: "application/json",
+            data: offerStringified,
+            traditional: true,
+            success: RedirectTo,
+        });
+    }
+
+    // Add Product to the table
+    function AddProduct(productName)
+    {
+        var tbl = document.getElementById("products");
+        if (tbl.rows.length == 2 && tbl.rows[1].cells.length == 0)
+        {
+            tbl.deleteRow(1);
+        }
+
+        var productsTransformed = Check$Values(products);
+
+        var justTheName = productName.split(' ')[0];
+        var productIndex = productsTransformed.findIndex(x => x.orderNumber.trim() === justTheName);
+
+        if (productIndex == - 1)
+            return;
+
+        var product = { id: 0, prodNumber:"", description: "", category: "", priceUnit: "", pricePerUnit: 0, quantity:0, meters:0, totalPrice: 0 };
+
+        product.id = productsTransformed[productIndex].id;
+        product.prodNumber = justTheName;
+        product.description = productsTransformed[productIndex].description;
+        product.pricePerUnit = productsTransformed[productIndex].price;
+        product.category = productsTransformed[productIndex].category;
+        product.priceUnit = productsTransformed[productIndex].priceUnit;
+        product.quantity = parseFloat(document.getElementById("quantity").value);
+        // За 1 л. м.
+        if (productsTransformed[productIndex].priceUnit === "За 1 л. м.") {
+            product.meters = parseFloat(document.getElementById("meters").value);
+            product.totalPrice = (product.quantity * product.pricePerUnit * product.meters).toFixed(2);
+        }
+        else {
+            product.meters = 0;
+            product.totalPrice = (product.quantity * product.pricePerUnit).toFixed(2);
+        }
+
+        productsSelected.push(product);
+
+        var table = document.getElementById("products").getElementsByTagName("tbody")[0];
+
+        var newRow = table.insertRow();
+
+        var quantity;
+        if (productsTransformed[productIndex].priceUnit === "За 1 л. м.") {
+            quantity = document.getElementById("quantity").value + "бр. х " + document.getElementById("meters").value + "м";
+        }
+        else {
+            quantity = document.getElementById("quantity").value + "бр.";
+        }
+
+        newRow.insertCell(0).appendChild(document.createTextNode(table.childElementCount));
+        newRow.insertCell(1).appendChild(document.createTextNode(product.prodNumber));
+        newRow.insertCell(2).appendChild(document.createTextNode(product.description));
+        newRow.insertCell(3).appendChild(document.createTextNode(product.category));
+        newRow.insertCell(4).appendChild(document.createTextNode(quantity));
+        newRow.insertCell(5).appendChild(document.createTextNode(product.pricePerUnit + " лв"));
+        newRow.insertCell(6).appendChild(document.createTextNode(product.totalPrice + " лв"));
+
+        var delButton = document.createElement("div");
+        delButton.innerHTML = "<a class='btn btn-danger' id='prodRow" + newRow.rowIndex + "' onclick='DeleteRow()'>  -  </a>";
+
+        newRow.insertCell(7).appendChild(delButton);
+
+        CalculateTotalPrice();
+
+        return productsSelected;
+    }
+
+    // Calculate total price of the offer so far
+    function CalculateTotalPrice()
+    {
+        if (client == null)
+            return;
+
+        var table = document.getElementById("products");
+
+        var total = 0;
+
+        for (var i = 1; i < table.rows.length; i++)
+        {
+            var currPrice = table.rows[i].cells[6].innerText.replace(' лв', '').trim();
+            total += parseFloat(currPrice);
+        }
+
+        var discount = parseFloat(document.getElementById("discountValue").value);
+
+        document.getElementById("totalValue").textContent = total.toFixed(2) + ' лв';
+        document.getElementById("discountFromTotal").textContent = (total * discount / 100).toFixed(2) + ' лв';
+        document.getElementById("totalWithoutVAT").textContent = (total - (total * (discount / 100))).toFixed(2) + ' лв';
+        document.getElementById("vatValue").textContent = ((total - (total * (discount / 100))) * 0.2).toFixed(2) + ' лв';
+        document.getElementById("totalWithVAT").textContent = (((total - (total * (discount / 100))) * 0.2) + (total - (total * (discount / 100)))).toFixed(2) + ' лв';
+    }
+
+    // Add event listener to Add Contact table
+    function DeleteRow() {
+        document.addEventListener("click", DeleteRowClick);
+    }
+
+    // Deleting row from the product table
+    function DeleteRowClick(evHandler)
+    {
+        var rowCall = evHandler.target.id;
+
+        var rowCP = document.getElementById(rowCall);
+
+        var rowRealCP = rowCP.parentNode.parentNode.parentNode;
+
+        var indexRow = rowRealCP.rowIndex;
+
+        var table = document.getElementById("products");
+
+        for (var i = indexRow; i < table.rows.length; i++)
+        {
+            table.rows[i].cells[0].textContent = i - 1;
+        }
+
+        productsSelected.splice(indexRow - 1, 1);
+
+        document.getElementById("products").deleteRow(indexRow);
+
+        CalculateTotalPrice();
+
+        document.removeEventListener("click", DeleteRowClick);
+    }
+
+    // Get the key pressed
+    function GetTheKeyPressed(event) {
+        if (event.which == null)
+            return String.fromCharCode(event.keyCode);
+        else if (event.which != 0 && event.charCode != 0)
+            return String.fromCharCode(event.which);
+        else
+            return null;
+    }
+
+    // IntelliSense function
+    function textChanged(event, sourceArray, userInputId, availableItemsId) {
+        var char = GetTheKeyPressed(event || window.event)
+
+        if (!char) return false;
+
+        var hints = [];
+        var matchFound = false;
+
+        var sourceTransformed = Check$Values(sourceArray);
+
+        for (var i = 0; i < sourceTransformed.length; i++) {
+            if (sourceTransformed[i].toLocaleLowerCase().startsWith(document.getElementById(userInputId).value.toLocaleLowerCase())) {
+                var boldPart = String(sourceTransformed[i]).slice(0, document.getElementById(userInputId).value.length + 1).bold();
+                hints.push(boldPart
+                    + sourceTransformed[i].substr(document.getElementById(userInputId).value.length + 1));
+                matchFound = true;
+            }
+        };
+
+        var list = document.getElementById(availableItemsId);
+
+        if (matchFound) {
+            var itemsInList = "";
+            for (var i = 0; i < hints.length; i++) {
+                if (i === 0)
+                    itemsInList += "<option selected>" + hints[i] + "</option>";
+                else
+                    itemsInList += "<option>" + hints[i] + "</option>";
+                list.innerHTML = itemsInList;
+                list.size = hints.length;
+            }
+        }
+        list.hidden = false;
+        return true;
+    }
+
+    // Write the selected value in the textbox
+    function UpdateTBValue(userInput, keyStrokes, fillOtherFileds = false, fieldsIds = null, values = null)
+    {
+        var getOption = document.getElementById(keyStrokes);
+        document.getElementById(userInput).value = getOption.options[getOption.selectedIndex].text;
+
+        document.getElementById(keyStrokes).hidden = true;
+
+        var fieldIdsTransformed = Check$Values(fieldsIds);
+
+        if (fillOtherFileds)
+        {
+            for (var i = 0; i < fieldIdsTransformed.length; i++)
+            {
+                document.getElementById(fieldIdsTransformed[i]).value = values[i];
+            }
+        }
+    }
+
+    // Redirect to another page
+    function RedirectTo(res)
+    {
+        window.location.href = res.newUrl;
+    }
+
+</script>
+

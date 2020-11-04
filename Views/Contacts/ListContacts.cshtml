@@ -1,0 +1,123 @@
+﻿@model ListClientsViewModel
+
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="col-sm-9">
+            <h2 class="text-primary">Клиенти на Trade Meister</h2>
+        </div>
+    </div>
+
+
+    <form class="mt-3" method="post" asp-action="searchclient">
+        @*Търсене*@
+        <label style="font-size:large">Търсене:</label>
+        <input class="col-sm-3" type="text" id="searchBox" name="searchText" />
+        @*Бутон търси*@
+        <button class="col-sm-1 ml-2 btn btn-success" type="submit">Търси</button>
+        @*Добави клиент*@
+        <a class="btn btn-primary col-sm-1 ml-2" asp-controller="contacts" asp-action="addcontact">Добави</a>
+    </form>
+
+    <table class="table mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th>Име</th>
+                <th>Отстъпка</th>
+                <th>Град</th>
+                <th>Адреси</th>
+                <th>Лица за контакт</th>
+                <th>Куриери</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Clients.Count; i++)
+            {
+                <tr>
+                    @*Име на клиента*@
+                    <td>@Model.Clients[i].Client.Name</td>
+                    @*Отстъпка за клиента*@
+                    <td>@Model.Clients[i].Client.Discount%</td>
+                    @*Град на клиента*@
+                    <td>@Model.Clients[i].Client.City</td>
+                    @*Адреси за доставка към клиента*@
+                    <td>
+                        @if (Model.Clients[i].DeliveryAddresses.Count > 0)
+                        {
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Адрес</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int k = 0; k < Model.Clients[i].DeliveryAddresses.Count; k++)
+                                    {
+                                        <tr>
+                                            <td>@Model.Clients[i].DeliveryAddresses[k].DelAddress</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </td>
+                    @*Лица за контакт на клиента*@
+                    <td>
+                        @if (Model.Clients[i].Contacts.Count > 0)
+                        {
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Име</th>
+                                        <th>Телефонен номер</th>
+                                        <th>Email адрес</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int k = 0; k < Model.Clients[i].Contacts.Count; k++)
+                                    {
+                                        <tr>
+                                            <td>@Model.Clients[i].Contacts[k].Name</td>
+                                            <td>@Model.Clients[i].Contacts[k].PhoneNumber</td>
+                                            <td>@Model.Clients[i].Contacts[k].EmailAddress</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </td>
+                    @*Куриери с които работи клиента*@
+                    <td>
+                        @if (Model.Clients[i].Couriers.Count > 0)
+                        {
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Име на куриер</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int k = 0; k < Model.Clients[i].Couriers.Count; k++)
+                                    {
+                                        <tr>
+                                            <td>@Model.Clients[i].Couriers[k].CourierName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </td>
+                    <td class="border-0">
+                        <div>
+                            <div class="col-sm-1 mb-2">
+                                <a class="btn btn-warning" asp-controller="contacts" asp-action="updateclient" asp-route-id="@Model.Clients[i].Client.Id">Коригирай</a>
+                            </div>
+                            <div class="col-sm-1">
+                                <a class="btn btn-danger" asp-controller="contacts" asp-action="deleteclient" asp-route-id="@Model.Clients[i].Client.Id">Изтрий</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

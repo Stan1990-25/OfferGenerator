@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Product>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="col-sm-3">
+            <h2 class="text-primary">Продуктова гама</h2>
+        </div>
+        <label>Категория:</label>
+        <div class="dropdown col-sm-2">
+            <button style="width:200px;" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Всички</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" asp-controller="products" asp-action="getproductsbycategory" asp-route-category="Профили">Профили</a>
+                <a class="dropdown-item" asp-controller="products" asp-action="getproductsbycategory" asp-route-category="Сглобки">Сглобки</a>
+                <a class="dropdown-item" asp-controller="products" asp-action="getproductsbycategory" asp-route-category="Линейни задвижвания">Линейни задвижвания</a>
+                <a class="dropdown-item" asp-controller="products" asp-action="getproductsbycategory" asp-route-category="Аксесоари">Аксесоари</a>
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <a asp-controller="products" asp-action="addproduct" class="btn btn-primary">Добави</a>
+        </div>
+    </div>
+    <table id="prodTable" class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th class="col-sm-1"></th>
+                <th class="col-sm-2">Продуктов номер</th>
+                <th class="col-sm-1">Ценообразуване</th>
+                <th class="col-sm-1">Цена</th>
+                <th class="col-sm-2">Категория</th>
+                <th class="col-sm-4">Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ 
+                var profilesColSpanDone = true;
+                var mountingColSpanDone = true;
+                var lienarColSpanDone = true;
+                var accessoriesColSpanDone = true;
+            }
+            @foreach (var product in Model)
+            {
+                <tr>
+                    @if (product.Category == "Профили" && profilesColSpanDone)
+                    {
+                        <td rowspan="@Model.Count(p => p.Category == "Профили")">
+                            <img src="~/images/profile_40x40.jpg" />
+                            <img src="~/images/profile_40x80.jpg" />
+                            <img src="~/images/profile_100x100.jpg" />
+                        </td>
+                        profilesColSpanDone = false;
+                    }
+                    @if (product.Category == "Сглобки" && mountingColSpanDone)
+                    {
+                        <td rowspan="@Model.Count(p => p.Category == "Сглобки")">
+                            <div>
+                                <img src="~/images/mounting_1.jpg" />
+                                <img src="~/images/mounting_2.jpg" />
+                                <img src="~/images/mounting_3.jpg" />
+                                <img src="~/images/mounting_4.jpg" />
+                            </div>
+                        </td>
+                        mountingColSpanDone = false;
+                    }
+                    @if (product.Category == "Линейни задвижвания" && lienarColSpanDone)
+                    {
+                        <td rowspan="@Model.Count(p => p.Category == "Линейни задвижвания")">
+                            <div>
+                                <img src="~/images/linear_1.jpg" />
+                                <img src="~/images/linear_2.jpg" />
+                                <img src="~/images/linear_3.jpg" />
+                                <img src="~/images/linear_4.jpg" />
+                            </div>
+                        </td>
+                        lienarColSpanDone = false;
+                    }
+                    @if (product.Category == "Аксесоари" && accessoriesColSpanDone)
+                    {
+                        <td rowspan="@Model.Count(p => p.Category == "Аксесоари")">
+                            <div>
+                                <img src="~/images/accessories_1.jpg" />
+                                <img src="~/images/accessories_2.jpg" />
+                                <img src="~/images/accessories_3.jpg" />
+                            </div>
+                        </td>
+                        accessoriesColSpanDone = false;
+                    }
+                    <td>@product.OrderNumber</td>
+                    <td>@product.PriceUnit</td>
+                    <td>@product.Price лв</td>
+                    <td>@product.Category</td>
+                    <td>
+                        <div>
+                            <textarea rows="2" cols="50" readonly>@product.Description</textarea>
+                        </div>
+                    </td>
+                    <td class="border-0">
+                        <div>
+                            <div class="col-sm-1 mb-2">
+                                <a class="btn btn-warning" asp-controller="products" asp-action="updateproduct" asp-route-id="@product.Id">Коригирай</a>
+                            </div>
+                            <div class="col-sm-1">
+                                <a class="btn btn-danger" asp-controller="products" asp-action="deleteproduct" asp-route-id="@product.Id">Изтрий</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<a href="/products/exportpdf" class="btn btn-primary">ExportToPDF</a>
+
+@section Scripts
+{
+    <script src="~/lib/twitter-bootstrap/js/CustomScripts/UIScripts.js"></script>
+}

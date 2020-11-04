@@ -1,0 +1,60 @@
+﻿@model ClientViewModel
+
+
+<form method="post" class="mt-3">
+
+    <div class="container-fluid">
+        <h1 class="text-primary text-center mb-4">Сигурни ли сте, че искате да изтриете клиент "@Model.Client.Name"?</h1>
+
+        <div>
+            <h3>Име: @Model.Client.Name</h3>
+        </div>
+        <div>
+            <h3 class="mt-2">Отстъпка: @Model.Client.Discount%</h3>
+        </div>
+
+        <div>
+            <h3>Лица за контакт:</h3>
+            <div>
+                @foreach (var contact in Model.Contacts)
+                {
+                    <label>Име: @contact.Name, Телефонен номер: @contact.PhoneNumber, Email адрес: @contact.EmailAddress</label>
+                }
+            </div>
+        </div>
+
+        <div>
+            <h3>Адреси за доставка:</h3>
+            <div>
+                @foreach (var deliveryAddress in Model.DeliveryAddresses)
+                {
+                    <label>Адрес: @deliveryAddress.DelAddress</label>
+                }
+            </div>
+        </div>
+
+        <div>
+            <h3>Куриерски фирми:</h3>
+            <div>
+                @foreach (var courier in Model.Couriers)
+                {
+                    <label>Име на куриерска фирма: @courier.CourierName</label>
+                }
+            </div>
+        </div>
+
+        <div class="wrapper list-group-horizontal-sm">
+            <button class="btn btn-primary" style="width: 100px" type="submit" 
+                    asp-controller="contacts" asp-action="deleteclient" asp-route-id="@Model.Client.Id">Да</button>
+            <a class="btn btn-danger" id="btnCancel" style="width: 100px">Не</a>
+        </div>
+
+    </div>
+
+</form>
+
+<script type="text/javascript">
+    document.getElementById("btnCancel").addEventListener("click", function (e) {
+        history.go(-1);
+    });
+</script>

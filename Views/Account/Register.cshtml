@@ -1,0 +1,60 @@
+﻿@model RegisterViewModel
+
+<h3 class="text-primary text-center mt-4">Регистриране на потребител</h3>
+
+<div class="row container-fluid container-center">
+    <form method="post" asp-controller="account" asp-action="register">
+
+        @*Име на потребител*@
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="row">
+            <div class="col-sm-2"><label>Име:</label></div>
+            <div style="width:400px">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Email на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Email:</label></div>
+            <div style="width:400px">
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Парола на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Парола:</label></div>
+            <div style="width:400px">
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="@Model.Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Потвърждение на паролата на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Потвърди парола:</label></div>
+            <div style="width:400px">
+                <input type="password" asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="@Model.ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Ниво на достъп на потребител на потребител*@
+        <div class="row mt-2">
+            <label asp-for="@Model.Role" class="col-sm-2 col-form-label"></label>
+            <div style="width:400px">
+                <select asp-for="@Model.Role" class="custom-select mr-sm-2"
+                        asp-items="@Html.GetEnumSelectList<Role>()"></select>
+                <span asp-validation-for="@Model.Role" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Бутон "Регистрирай"*@
+        <div class="horizontal-center">
+            <button type="submit" class="btn btn-primary mt-2">Регистрирай</button>
+        </div>
+    </form>
+</div>

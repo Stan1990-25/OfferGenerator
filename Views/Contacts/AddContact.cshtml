@@ -1,0 +1,134 @@
+﻿@model ClientViewModel
+
+<form class="mt-3" method="post">
+    <div class="container-fluid">
+        <h1 class="text-primary text-center mb-4">Добавяне на клиент</h1>
+
+        @*Поле за въвеждане на име на клиент*@
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Име на клиент: </label>
+            </div>
+            <div class="col-sm-6">
+                <input id="clName" value="@Model.Client.Name"
+                       class="form-control" placeholder="Име на клиент">
+            </div>
+        </div>
+        @*Поле за въвеждане на отстъпка за клиент*@
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Отстъпка: </label>
+            </div>
+            <div class="col-sm-6 mt-1">
+                <input id="clDiscount" value="0" class="form-control" placeholder="Моля въведете стойност в %">
+            </div>
+        </div>
+        @*Поле за въвеждане на град за клиент*@
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Град: </label>
+            </div>
+            <div class="col-sm-6 mt-1">
+                <input id="clCity" class="form-control" placeholder="Име на града...">
+            </div>
+        </div>
+
+        @*Поле за въвеждане на лице за контакт*@
+        <h2 class="text-primary mt-2 mb-2">Лица за контакт:</h2>
+
+        <div class="row">
+            <div class="col-sm-1">
+                <label>Име:</label>
+            </div>
+            <div class="col-sm-2">
+                <input id="cpName" class="form-control" placeholder="Име на лице за контакт" />
+            </div>
+            <div class="col-sm-1">
+                <label>Телефонен номер:</label>
+            </div>
+            <div class="col-sm-1">
+                <input id="cpPhone" class="form-control" placeholder="+359888 123456" />
+            </div>
+            <div class="col-sm-1">
+                <label>Email адрес:</label>
+            </div>
+            <div class="col-sm-2">
+                <input id="cpEmail" class="form-control" placeholder="example@example.com" />
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-primary" onclick="AddContactP()" @*type="submit"
+                        asp-controller="contacts" asp-action="addcontactperson" asp-all-route-data="parmsContact"*@>  +  </a>
+            </div>
+        </div>
+        <table id="cpTable" class="table table-bordered col-sm-8">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="col-sm-3">Име</th>
+                    <th class="col-sm-2">Телефонен номер</th>
+                    <th class="col-sm-3">Email адрес</th>
+                    <th class="col-sm-1"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        @*Поле за въвеждане на адрес за доставка*@
+        <h2 class="text-primary mt-2 mb-2">Адреси за доставка:</h2>
+
+        <div class="row">
+            <div class="col-sm-1">
+                <label>Адрес:</label>
+            </div>
+            <div class="col-sm-7">
+                <input id="daAddress" class="form-control" placeholder="гр. София, ул. 'Дунавски лебед' №22..." />
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-primary" onclick="AddDelAdd()" @*asp-controller="contacts" asp-action="addaddressforclient" asp-all-route-data="parmsDelAddress"*@>  +  </a>
+            </div>
+        </div>
+        <table id="daTable" class="table table-bordered mt-2 col-sm-8">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="col-sm-8">Адреси за доставка</th>
+                    <th class="col-sm-1"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        @*Поле за въвеждане на куриерски фирми с които работи клиента*@
+        <h2 class="text-primary mt-2 mb-2">Куриерски фирми:</h2>
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Име на куриерска фирма:</label>
+            </div>
+            <div class="col-sm-6">
+                <input id="crName" class="form-control" placeholder="Име на куриерската фирма..." />
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-primary" onclick="AddCourier()" @*asp-controller="contacts" asp-action="addclientcourier" asp-all-route-data="parmsCourier"*@>  +  </a>
+            </div>
+        </div>
+        <table id="crTable" class="table table-bordered mt-2 col-sm-8">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="col-sm-8">Куриерски фирми</th>
+                    <th class="col-sm-1"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div class="wrapper">
+            <a class="btn btn-primary form-control" onclick="ConstrutJSON(0, '/contacts/addcontact')" style="width:200px;">Добави клиент</a>
+        </div>
+
+    </div>
+</form>
+
+<script src="~/lib/twitter-bootstrap/js/CustomScripts/UIScripts.js"></script>
+
+

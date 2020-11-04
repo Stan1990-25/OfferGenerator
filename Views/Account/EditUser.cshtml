@@ -1,0 +1,74 @@
+﻿@model UpdateUserViewModel
+
+@{ 
+    var userId = ViewBag.UserId;
+}
+
+<h3 id="title" class="text-primary text-center mt-4">@ViewBag.Title@Model.Name</h3>
+
+<div class="row container-fluid container-center">
+    <form method="post" asp-controller="account" asp-action="edituser">
+
+        @*Име на потребител*@
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="row">
+            <div class="col-sm-2"><label>Име:</label></div>
+            <div style="width:400px">
+                <input asp-for="Name" class="form-control" id="nameTb" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Email на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Email:</label></div>
+            <div style="width:400px">
+                <input asp-for="Email" class="form-control" id="emailTb" />
+                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Текуща парола на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label asp-for="@Model.CurrentPassowrd"></label></div>
+            <div style="width:400px">
+                <input type="password" asp-for="CurrentPassowrd" class="form-control" id="passTb" />
+                <span asp-validation-for="@Model.CurrentPassowrd" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Нова парола на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Парола:</label></div>
+            <div style="width:400px">
+                <input type="password" asp-for="Password" class="form-control" id="passTb" />
+                <span asp-validation-for="@Model.Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Потвърждение на новата парола на потребител*@
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Потвърди парола:</label></div>
+            <div style="width:400px">
+                <input type="password" asp-for="ConfirmPassword" class="form-control" id="confPassTb" />
+                <span asp-validation-for="@Model.ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Ниво на достъп на потребител на потребител*@
+        <div class="row mt-2">
+            <label asp-for="@Model.Role" class="col-sm-2 col-form-label"></label>
+            <div style="width:400px">
+                <select asp-for="@Model.Role" class="custom-select mr-sm-2"
+                        asp-items="@Html.GetEnumSelectList<Role>()" id="roleCb"></select>
+                <span asp-validation-for="@Model.Role" class="text-danger"></span>
+            </div>
+        </div>
+
+        @*Бутон "Промени", "Изтрий"*@
+        <div class="horizontal-center">
+            <button id="btnSubmit" class="btn btn-primary mt-2" asp-action="edituser" asp-route-id="@userId">Промени</button>
+            <a class="btn btn-danger mt-2" asp-action="editusers">Отмени</a>
+        </div>
+    </form>
+</div>

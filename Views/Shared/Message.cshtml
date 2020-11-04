@@ -1,0 +1,13 @@
+﻿@model string
+
+<h1 class="text-center mb-5">@Model</h1>
+<div class="wrapper mt-5">
+    <a class="btn btn-primary vertical-center" id="btnBack">Обратно</a>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("click", function (e) {
+        history.go(-1);
+    });
+</script>
+

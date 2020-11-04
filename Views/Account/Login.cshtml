@@ -1,0 +1,20 @@
+﻿@model LoginViewModel
+
+<h3 class="text-primary text-center mt-4">Вписване на потребител</h3>
+
+<div class="row container-fluid container-center">
+    <form method="post" asp-controller="account" asp-action="login">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="row">
+            <div class="col-sm-2"><label>Име:</label></div>
+            <div style="width:400px"><input asp-for="Name" class="form-control" /></div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm-2"><label>Парола:</label></div>
+            <div style="width:400px"><input type="password" asp-for="Password" class="form-control" /></div>
+        </div>
+        <div class="horizontal-center">
+            <button type="submit" class="btn btn-primary mt-2">Впиши</button>
+        </div>
+    </form>
+</div>

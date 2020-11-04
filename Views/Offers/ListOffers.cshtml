@@ -1,0 +1,169 @@
+﻿@model ListOffersViewModel
+
+    <div class="container-fluid mt-2">
+
+        <h2 class="text-primary text-center">Списък с оферти</h2>
+
+        @*Избор на клиент*@
+        <form action="filter" method="post">
+            <div class="row mt-5">
+
+                <div class="col-sm-1"> <label style="font-size:large">Търсене:</label></div>
+                <div class="col-sm-2">
+                    <input type="text" id="searchBox" name="searchText"
+                           onkeypress="textChanged(this, clientNames, 'searchBox', 'keyDataSearch')"
+                           oninput="textChanged(this, clientNames, 'searchBox', 'keyDataSearch')" />
+                    <div>
+                        <select style="width:400px;" id="keyDataSearch" hidden onclick="UpdateTBValue('searchBox', 'keyDataSearch')">
+                        </select>
+                    </div>
+                </div>
+                @*От дата*@
+                <div class="col-sm-2">
+                    <label style="font-size:large">От:</label>
+                    <input type="date" id="fromDate" name="fromDate" />
+                </div>
+                @*До дата*@
+                <div class="col-sm-2">
+                    <label style="font-size:large">До:</label>
+                    <input type="date" id="toDate" name="toDate" />
+                </div>
+                @*Бутон търси*@
+                <button class="col-sm-1 btn btn-success" type="submit">Търси</button>
+                @*Бутон Създаване на нова оферта*@
+                <a class="col-sm-1 ml-1 btn btn-primary" asp-controller="offers" asp-action="createoffer">Създай</a>
+
+            </div>
+        </form>
+
+        @*Таблица с данни за офертата*@
+        <div class="table mt-5 col-sm-8">
+            <table id="offers">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>№</th>
+                        <th>Номер</th>
+                        <th>Клиент</th>
+                        <th>Отстъпка[%]</th>
+                        <th>Дата на съставяне</th>
+                        <th>Тотал</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Offers.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@Model.Offers[i].Number</td>
+                            <td>@Model.Offers[i].ClientName</td>
+                            <td>@Model.Offers[i].Discount</td>
+                            <td>@Model.Offers[i].DateModified</td>
+                            <td>@Model.Offers[i].Total лв</td>
+                            <td>
+                                @{
+                                    var isApproved = string.Empty;
+                                    if (Model.Offers[i].IsApproved)
+                                        isApproved = "Одобрена";
+                                    else
+                                        isApproved = "Неодобрена";
+                                }
+                                @isApproved
+                            </td>
+                            <td>
+                                <a class="btn btn-warning" asp-controller="offers" asp-action="seeallrevisions" asp-route-id="@Model.Offers[i].Number">Виж ревизии</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+<script>
+
+    @*var clients = @Json.Serialize(Model.AllClients.Clients);*@
+    var clientNames = @Json.Serialize(Model.AllClients.Clients.Select(c => c.Client.Name));
+
+    // Check whether the array has $values attribute
+    function Check$Values(sourceArray) {
+        var resultArray = [];
+        try {
+            for (var i = 0; i < sourceArray.$values.length; i++) {
+                resultArray.push(sourceArray.$values[i]);
+            }
+        }
+        catch (err) {
+            for (var i = 0; i < sourceArray.length; i++) {
+                resultArray.push(sourceArray[i]);
+            }
+        }
+        return resultArray;
+    }
+
+    // Get the key pressed
+    function GetTheKeyPressed(event)
+    {
+        if (event.which == null)
+            return String.fromCharCode(event.keyCode);
+        else if (event.which != 0 && event.charCode != 0)
+            return String.fromCharCode(event.which);
+        else
+            return null;
+    }
+
+    // IntelliSense function
+    function textChanged(event, sourceArray, userInputId, availableItemsId) {
+        var char = GetTheKeyPressed(event || window.event)
+
+        if (!char) return false;
+
+        var hints = [];
+        var matchFound = false;
+
+        var sourceTransformed = Check$Values(sourceArray);
+
+        for (var i = 0; i < sourceTransformed.length; i++) {
+            if (sourceTransformed[i].toLocaleLowerCase().startsWith(document.getElementById(userInputId).value.toLocaleLowerCase())) {
+                var boldPart = String(sourceTransformed[i]).slice(0, document.getElementById(userInputId).value.length + 1).bold();
+                hints.push(boldPart
+                    + sourceTransformed[i].substr(document.getElementById(userInputId).value.length + 1));
+                matchFound = true;
+            }
+        };
+
+        var list = document.getElementById(availableItemsId);
+
+        if (matchFound) {
+            var itemsInList = "";
+            for (var i = 0; i < hints.length; i++) {
+                if (i === 0)
+                    itemsInList += "<option selected>" + hints[i] + "</option>";
+                else
+                    itemsInList += "<option>" + hints[i] + "</option>";
+                list.innerHTML = itemsInList;
+                list.size = hints.length;
+            }
+        }
+        list.hidden = false;
+        return true;
+    }
+
+    // Write the selected value in the textbox
+    function UpdateTBValue(userInput, keyStrokes, fillOtherFileds = false, fieldsIds = null, values = null) {
+        var getOption = document.getElementById(keyStrokes);
+        document.getElementById(userInput).value = getOption.options[getOption.selectedIndex].text;
+
+        document.getElementById(keyStrokes).hidden = true;
+
+        var fieldIdsTransformed = Check$Values(fieldsIds);
+
+        if (fillOtherFileds) {
+            for (var i = 0; i < fieldIdsTransformed.length; i++) {
+                document.getElementById(fieldIdsTransformed[i]).value = values[i];
+            }
+        }
+    }
+
+</script>
