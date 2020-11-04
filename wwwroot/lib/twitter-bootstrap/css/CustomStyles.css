@@ -1,0 +1,36 @@
+﻿.wrapper {
+    text-align: center;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.horizontal-center {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.line {
+    width: 50%;
+    height: 2px;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-width: 0px;
+}
+
+div.container-center {
+/*    display: flex;*/
+    justify-content: center;
+}
