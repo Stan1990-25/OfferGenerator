@@ -1,0 +1,2 @@
+# OfferGenerator
+Application generating offers
